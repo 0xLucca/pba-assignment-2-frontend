@@ -170,6 +170,9 @@ export default function Home() {
                 Public Key
               </th>
               <th scope="col" className="px-6 py-3">
+                Account ID
+              </th>
+              <th scope="col" className="px-6 py-3">
                 type
               </th>
               <th scope="col" className="px-6 py-3">
@@ -188,6 +191,7 @@ export default function Home() {
               >
                 {addresses[0].publickey}
               </th>
+              <td className="px-6 py-4">0</td>
               <td className="px-6 py-4">{addresses[0].type}</td>
               <td className="px-6 py-4">{balances[0]}</td>
               <td className="px-6 py-4">{nonces[0]}</td>
@@ -199,6 +203,7 @@ export default function Home() {
               >
                 {addresses[1].publickey}
               </th>
+              <td className="px-6 py-4">1</td>
               <td className="px-6 py-4">{addresses[1].type}</td>
               <td className="px-6 py-4">{balances[1]}</td>
               <td className="px-6 py-4">{nonces[1]}</td>
@@ -210,6 +215,7 @@ export default function Home() {
               >
                 {addresses[2].publickey}
               </th>
+              <td className="px-6 py-4">2</td>
               <td className="px-6 py-4">{addresses[2].type}</td>
               <td className="px-6 py-4">{balances[2]}</td>
               <td className="px-6 py-4">{nonces[2]}</td>
@@ -218,21 +224,116 @@ export default function Home() {
         </table>
       </div>
 
-      <label
-        htmlFor="extrinsic"
-        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-      >
-        Select the type of extrinsic
-      </label>
-      <select
-        id="extrinsic"
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-      >
-        <option value="0">Mint</option>
-        <option value="1">Transfer</option>
-        <option value="2">GetState</option>
-      </select>
-      <div>
+      <div className="flex">
+        <a
+          href="#"
+          class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+        >
+          <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+            Mint Extrinsic
+          </h5>
+
+          <div class="flex-col ">
+            <label
+              for="small-input"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              To
+            </label>
+            <select
+              id="extrinsic"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+              <option value="0">Account 1</option>
+              <option value="1">Account 2</option>
+            </select>
+          </div>
+          <div>
+            <label
+              id="mint_amount"
+              for="small-input"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Amount
+            </label>
+            <input
+              type="number"
+              min="0"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+            <button
+              type="button"
+              className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+              onClick={() => {
+                executeExtrinsic(document.getElementById("extrinsic").value);
+              }}
+            >
+              Send
+            </button>
+          </div>
+        </a>
+        <a
+          href="#"
+          class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+        >
+          <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+            Transfer Extrinsic
+          </h5>
+
+          <div class="flex-col ">
+            <label
+              for="small-input"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              From
+            </label>
+            <select
+              id="transfer_from"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+              <option value="0">Account 1</option>
+              <option value="1">Account 2</option>
+            </select>
+            <label
+              for="small-input"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              To
+            </label>
+            <select
+              id="transfer_to"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+              <option value="1">Account 2</option>
+              <option value="0">Account 1</option>
+            </select>
+          </div>
+          <div>
+            <label
+              for="small-input"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Amount
+            </label>
+            <input
+              type="number"
+              min="0"
+              id="transfer_amount"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+            <button
+              type="button"
+              className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+              onClick={() => {
+                transfer(document.getElementById("transfer_from").value),
+                  document.getElementById("transfer_to").value,
+                  document.getElementById("transfer_amount").value;
+              }}
+            >
+              Send
+            </button>
+          </div>
+        </a>
         <button
           type="button"
           className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
