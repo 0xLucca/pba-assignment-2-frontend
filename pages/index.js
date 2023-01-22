@@ -35,6 +35,10 @@ export default function Home() {
     },
   ]);
 
+  setTimeout(() => {
+    getAccountState();
+  }, "8000");
+
   function getAccountState() {
     for (let i = 0; i < 4; i++) {
       axios
@@ -60,9 +64,9 @@ export default function Home() {
     }
   }
 
-  function transfer(from, to, amount) {
+  function transfer(from, to, amount, tip) {
     axios
-      .post(`http://localhost:8000/api/transfer/${from}/${to}/${amount}`)
+      .post(`http://localhost:8000/api/transfer/${from}/${to}/${amount}/${tip}`)
       .then(function (response) {
         // handle success
         console.log(response);
@@ -76,9 +80,9 @@ export default function Home() {
       });
   }
 
-  function mint(to, amount) {
+  function mint(signer, to, amount) {
     axios
-      .post(`http://localhost:8000/api/mint/${to}/${amount}`)
+      .post(`http://localhost:8000/api/mint/${signer}/${to}/${amount}`)
       .then(function (response) {
         // handle success
         console.log(response);
@@ -240,11 +244,8 @@ export default function Home() {
         </table>
       </div>
 
-      <div className="flex flex-wrap justify-between">
-        <a
-          href="#"
-          className="flex-1 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
-        >
+      <div className="flex flex-wrap justify-around mt-5">
+        <div className="flex-1 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
           <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
             Mint Extrinsic
           </h5>
@@ -252,17 +253,16 @@ export default function Home() {
           <div class="flex-col ">
             <label
               htmlFor="small-input"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              class="block my-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              From (Privileged)
+              Tx Signer
             </label>
             <select
               id="mint_from"
               defaultValue={0}
-              disabled
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
-              <option value="0">Account 0</option>
+              <option value="0">Account 0 (Privileged)</option>
               <option value="1">Account 1</option>
               <option value="2">Account 2</option>
             </select>
@@ -270,7 +270,7 @@ export default function Home() {
           <div class="flex-col ">
             <label
               htmlFor="small-input"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              class="block my-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               To
             </label>
@@ -286,7 +286,7 @@ export default function Home() {
           <div>
             <label
               htmlFor="small-input"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              class="block my-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               Amount
             </label>
@@ -298,9 +298,10 @@ export default function Home() {
             />
             <button
               type="button"
-              className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+              className="mt-5 bg-finanflixPurple w-full text-white bg-white border border-gray-300 focus:outline-none hover:bg-black focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
               onClick={() => {
                 mint(
+                  document.getElementById("mint_from").value,
                   document.getElementById("mint_to").value,
                   document.getElementById("mint_amount").value
                 );
@@ -309,11 +310,8 @@ export default function Home() {
               Send
             </button>
           </div>
-        </a>
-        <a
-          href="#"
-          class="flex-1 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
-        >
+        </div>
+        <div class="flex-1 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
           <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
             Transfer Extrinsic
           </h5>
@@ -321,7 +319,7 @@ export default function Home() {
           <div class="flex-col ">
             <label
               htmlFor="small-input"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              class="block my-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               From
             </label>
@@ -335,7 +333,7 @@ export default function Home() {
             </select>
             <label
               htmlFor="small-input"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              class="block my-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               To
             </label>
@@ -352,7 +350,7 @@ export default function Home() {
           <div>
             <label
               htmlFor="small-input"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              class="block my-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               Amount
             </label>
@@ -362,25 +360,36 @@ export default function Home() {
               id="transfer_amount"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             />
+            <label
+              htmlFor="small-input"
+              class="block my-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Tip
+            </label>
+            <input
+              type="number"
+              defaultValue={0}
+              min="0"
+              id="transfer_tip"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
             <button
               type="button"
-              className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+              className="mt-5 bg-finanflixPurple w-full text-white bg-white border border-gray-300 focus:outline-none hover:bg-black focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
               onClick={() => {
                 transfer(
                   document.getElementById("transfer_from").value,
                   document.getElementById("transfer_to").value,
-                  document.getElementById("transfer_amount").value
+                  document.getElementById("transfer_amount").value,
+                  document.getElementById("transfer_tip").value
                 );
               }}
             >
               Send
             </button>
           </div>
-        </a>
-        <a
-          href="#"
-          class="flex-1 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
-        >
+        </div>
+        <div class="flex-1 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
           <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
             Get Accounts State
           </h5>
@@ -388,7 +397,7 @@ export default function Home() {
           <div class="flex-col ">
             <button
               type="button"
-              className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+              className="bg-finanflixPurple w-full text-white bg-white border border-gray-300 focus:outline-none hover:bg-black focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
               onClick={() => {
                 getAccountState();
               }}
@@ -396,7 +405,7 @@ export default function Home() {
               Get
             </button>
           </div>
-        </a>
+        </div>
       </div>
     </div>
   );
