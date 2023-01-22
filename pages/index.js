@@ -17,14 +17,14 @@ export default function Home() {
     },
     {
       publickey:
-        "800528c955873e4c78b7df24f71db8f581aa99e3493bf496edf151abc1d72023",
+        "189dac29296d31814dc8c56cf3d36a0543372bba7538fa322a4aebfebc39e056",
       type: "User",
       balance: 0,
       nonce: 0,
     },
     {
       publickey:
-        "8e47aef932581a79eba838b7aeb3cb8bae1dfe4beb489b54a63f1ab2aed0260c",
+        "1a4fee48c1ba1a48e8cd43782a8485d635aa91cfb82cbb477f0c1c576bc4031c",
       type: "User",
       balance: 0,
       nonce: 0,
@@ -38,32 +38,35 @@ export default function Home() {
     },
   ]);
 
-  function getAccountState(accountNumber) {
-    axios
-      .get(`http://localhost:8000/api/account_state/${accountNumber}`)
-      .then(function (response) {
-        // handle success
-        console.log(response);
-        //Keep the old balances and nonces, only modify the one that was requested
-        setAccounts((prevAccounts) => {
-          const newAccounts = [...prevAccounts];
-          newAccounts[accountNumber].balance = response.data.balance;
-          newAccounts[accountNumber].nonce = response.data.nonce;
-          return newAccounts;
+  function getAccountState() {
+    for (let i = 0; i < 4; i++) {
+      axios
+        .get(`http://localhost:8000/api/account_state/${i}`)
+        .then(function (response) {
+          // handle success
+          console.log(response);
+          //Keep the old balances and nonces, only modify the one that was requested
+          setAccounts((prevAccounts) => {
+            const newAccounts = [...prevAccounts];
+            newAccounts[i].balance = response.data.balance;
+            newAccounts[i].nonce = response.data.nonce;
+            return newAccounts;
+          });
+        })
+        .catch(function (error) {
+          // handle error
+          console.log(error);
+        })
+        .then(function () {
+          // always executed
         });
-      })
-      .catch(function (error) {
-        // handle error
-        console.log(error);
-      })
-      .then(function () {
-        // always executed
-      });
+    }
   }
 
   function transfer(from, to, amount) {
+    console.log(`http://localhost:8000/api/transfer/${from}/${to}/${amount}`);
     axios
-      .post(`http://localhost:8000/api/transfer/${from}/${to}/${amount}}`)
+      .post(`http://localhost:8000/api/transfer/${from}/${to}/${amount}`)
       .then(function (response) {
         // handle success
         console.log(response);
@@ -350,9 +353,11 @@ export default function Home() {
               type="button"
               className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
               onClick={() => {
-                transfer(document.getElementById("transfer_from").value),
+                transfer(
+                  document.getElementById("transfer_from").value,
                   document.getElementById("transfer_to").value,
-                  document.getElementById("transfer_amount").value;
+                  document.getElementById("transfer_amount").value
+                );
               }}
             >
               Send
@@ -372,7 +377,7 @@ export default function Home() {
               type="button"
               className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
               onClick={() => {
-                getAccountState(0);
+                getAccountState();
               }}
             >
               Get
