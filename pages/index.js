@@ -7,37 +7,36 @@ import React, { useRef, useState } from "react";
 const axios = require("axios");
 
 export default function Home() {
-  const [balances, setBalances] = useState([0, 0, 0]);
-  const [nonces, setNonces] = useState([0, 0, 0]);
-  const [senderAccount, setSenderAccount] = useState(0);
-  const [receiverAccount, setReceiverAccount] = useState(1);
-  const addresses = [
-    {
-      publickey:
-        "d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d",
-      type: "Authority",
-    },
+  const [accounts, setAccounts] = useState([
     {
       publickey:
         "def12e42f3e487e9b14095aa8d5cc16a33491f1b50dadcf8811d1480f3fa8627",
       type: "User",
+      balance: 0,
+      nonce: 0,
     },
     {
       publickey:
         "800528c955873e4c78b7df24f71db8f581aa99e3493bf496edf151abc1d72023",
       type: "User",
+      balance: 0,
+      nonce: 0,
     },
-  ];
-
-  function executeExtrinsic(extrinsic) {
-    if (extrinsic === "0") {
-      mint(senderAccount, 100);
-    } else if (extrinsic === "1") {
-      transfer(senderAccount, receiverAccount, 10);
-    } else if (extrinsic === "2") {
-      getAccountState(senderAccount);
-    }
-  }
+    {
+      publickey:
+        "8e47aef932581a79eba838b7aeb3cb8bae1dfe4beb489b54a63f1ab2aed0260c",
+      type: "User",
+      balance: 0,
+      nonce: 0,
+    },
+    {
+      publickey:
+        "d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d",
+      type: "Authority",
+      balance: 0,
+      nonce: 0,
+    },
+  ]);
 
   function getAccountState(accountNumber) {
     axios
@@ -45,6 +44,13 @@ export default function Home() {
       .then(function (response) {
         // handle success
         console.log(response);
+        //Keep the old balances and nonces, only modify the one that was requested
+        setAccounts((prevAccounts) => {
+          const newAccounts = [...prevAccounts];
+          newAccounts[accountNumber].balance = response.data.balance;
+          newAccounts[accountNumber].nonce = response.data.nonce;
+          return newAccounts;
+        });
       })
       .catch(function (error) {
         // handle error
@@ -72,6 +78,7 @@ export default function Home() {
   }
 
   function mint(to, amount) {
+    console.log(`http://localhost:8000/api/mint/${to}/${amount}`);
     axios
       .post(`http://localhost:8000/api/mint/${to}/${amount}`)
       .then(function (response) {
@@ -161,7 +168,6 @@ export default function Home() {
         </div>
       </nav>
 
-      <Navbar></Navbar>
       <div className="relative overflow-x-auto">
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -189,45 +195,57 @@ export default function Home() {
                 scope="row"
                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
               >
-                {addresses[0].publickey}
+                {accounts[3].publickey}
               </th>
-              <td className="px-6 py-4">0</td>
-              <td className="px-6 py-4">{addresses[0].type}</td>
-              <td className="px-6 py-4">{balances[0]}</td>
-              <td className="px-6 py-4">{nonces[0]}</td>
+              <td className="px-6 py-4">X</td>
+              <td className="px-6 py-4">{accounts[3].type}</td>
+              <td className="px-6 py-4">{accounts[3].nonce}</td>
+              <td className="px-6 py-4">{accounts[3].balance}</td>
             </tr>
             <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
               <th
                 scope="row"
                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
               >
-                {addresses[1].publickey}
+                {accounts[0].publickey}
+              </th>
+              <td className="px-6 py-4">0</td>
+              <td className="px-6 py-4">{accounts[0].type}</td>
+              <td className="px-6 py-4">{accounts[0].nonce}</td>
+              <td className="px-6 py-4">{accounts[0].balance}</td>
+            </tr>
+            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+              >
+                {accounts[1].publickey}
               </th>
               <td className="px-6 py-4">1</td>
-              <td className="px-6 py-4">{addresses[1].type}</td>
-              <td className="px-6 py-4">{balances[1]}</td>
-              <td className="px-6 py-4">{nonces[1]}</td>
+              <td className="px-6 py-4">{accounts[1].type}</td>
+              <td className="px-6 py-4">{accounts[1].nonce}</td>
+              <td className="px-6 py-4">{accounts[1].balance}</td>
             </tr>
             <tr className="bg-white dark:bg-gray-800">
               <th
                 scope="row"
                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
               >
-                {addresses[2].publickey}
+                {accounts[2].publickey}
               </th>
               <td className="px-6 py-4">2</td>
-              <td className="px-6 py-4">{addresses[2].type}</td>
-              <td className="px-6 py-4">{balances[2]}</td>
-              <td className="px-6 py-4">{nonces[2]}</td>
+              <td className="px-6 py-4">{accounts[2].type}</td>
+              <td className="px-6 py-4">{accounts[2].nonce}</td>
+              <td className="px-6 py-4">{accounts[2].balance}</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div className="flex">
+      <div className="flex flex-wrap justify-between">
         <a
           href="#"
-          class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+          class="flex-1 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
         >
           <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
             Mint Extrinsic
@@ -235,28 +253,29 @@ export default function Home() {
 
           <div class="flex-col ">
             <label
-              for="small-input"
+              htmlFor="small-input"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               To
             </label>
             <select
-              id="extrinsic"
+              id="mint_to"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
-              <option value="0">Account 1</option>
-              <option value="1">Account 2</option>
+              <option value="0">Account 0</option>
+              <option value="1">Account 1</option>
+              <option value="2">Account 2</option>
             </select>
           </div>
           <div>
             <label
-              id="mint_amount"
-              for="small-input"
+              htmlFor="small-input"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               Amount
             </label>
             <input
+              id="mint_amount"
               type="number"
               min="0"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -265,7 +284,10 @@ export default function Home() {
               type="button"
               className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
               onClick={() => {
-                executeExtrinsic(document.getElementById("extrinsic").value);
+                mint(
+                  document.getElementById("mint_to").value,
+                  document.getElementById("mint_amount").value
+                );
               }}
             >
               Send
@@ -274,7 +296,7 @@ export default function Home() {
         </a>
         <a
           href="#"
-          class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+          class="flex-1 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
         >
           <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
             Transfer Extrinsic
@@ -282,7 +304,7 @@ export default function Home() {
 
           <div class="flex-col ">
             <label
-              for="small-input"
+              htmlFor="small-input"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               From
@@ -291,11 +313,12 @@ export default function Home() {
               id="transfer_from"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
-              <option value="0">Account 1</option>
-              <option value="1">Account 2</option>
+              <option value="0">Account 0</option>
+              <option value="1">Account 1</option>
+              <option value="2">Account 2</option>
             </select>
             <label
-              for="small-input"
+              htmlFor="small-input"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               To
@@ -303,14 +326,16 @@ export default function Home() {
             <select
               id="transfer_to"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              defaultValue={1}
             >
-              <option value="1">Account 2</option>
-              <option value="0">Account 1</option>
+              <option value="0">Account 0</option>
+              <option value="1">Account 1</option>
+              <option value="2">Account 2</option>
             </select>
           </div>
           <div>
             <label
-              for="small-input"
+              htmlFor="small-input"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               Amount
@@ -334,15 +359,26 @@ export default function Home() {
             </button>
           </div>
         </a>
-        <button
-          type="button"
-          className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-          onClick={() => {
-            executeExtrinsic(document.getElementById("extrinsic").value);
-          }}
+        <a
+          href="#"
+          class="flex-1 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
         >
-          Send
-        </button>
+          <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+            Get Accounts State
+          </h5>
+
+          <div class="flex-col ">
+            <button
+              type="button"
+              className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+              onClick={() => {
+                getAccountState(0);
+              }}
+            >
+              Get
+            </button>
+          </div>
+        </a>
       </div>
     </div>
   );
