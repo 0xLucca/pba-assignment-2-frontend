@@ -45,7 +45,7 @@ export default function Home() {
         .get(`http://localhost:8000/api/account_state/${i}`)
         .then(function (response) {
           // handle success
-          console.log(response);
+          //console.log(response);
           //Keep the old balances and nonces, only modify the one that was requested
           setAccounts((prevAccounts) => {
             const newAccounts = [...prevAccounts];
